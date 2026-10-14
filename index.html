@@ -57,7 +57,7 @@
         </div>
         <ul class="stats">
           <li><b data-count="18" data-suffix="+">0</b><span>Years of professional experience</span></li>
-          <li><b data-count="2" data-suffix="">0</b><span>AI projects completed</span></li>
+          <li><b id="projectCount" data-count="3" data-suffix="">0</b><span>AI projects completed</span></li>
           <li><b data-count="24" data-suffix="h">0</b><span>Reply time</span></li>
         </ul>
       </div>
@@ -135,18 +135,25 @@
         <span class="eyebrow">Selected work</span>
         <h2>Real problems, measurable results</h2>
       </div>
-      <div class="grid g2">
+      <div class="grid g2" id="projectGrid">
+        <!-- Fallback cards: replaced automatically by repositories tagged "portfolio" -->
+        <article class="project reveal">
+          <div class="tags"><span>n8n</span><span>OpenAI</span><span>Gmail</span></div>
+          <h3>Travel Agency Customer Support Email Agent</h3>
+          <p>An AI agent for a travel agency that reads customer emails (visas, tour packages, refunds, bookings) and replies politely in the customer's language, handing refunds and complaints to a human team member.</p>
+          <a class="link" href="https://github.com/mazidai/skywing-travels-email-support-agent" target="_blank" rel="noopener">View on GitHub →</a>
+        </article>
         <article class="project reveal">
           <div class="tags"><span>n8n</span><span>ChatGPT</span><span>Gmail</span></div>
           <h3>E-commerce Customer Support Email Agent</h3>
-          <p>An AI agent that reads incoming customer emails for an online store, understands each request (product questions, prices, orders, discount requests) and replies with clear, polite messages in the customer's language — so support teams answer faster with less manual work.</p>
-          <a class="link" href="https://github.com/Mazidai/ecommerce-support-email-agent" target="_blank" rel="noopener">View on GitHub →</a>
+          <p>An AI agent that reads incoming customer emails for an online store, understands each request (order status, returns, refunds, product questions) and prepares clear, polite replies — so support teams answer faster with less manual work.</p>
+          <a class="link" href="https://github.com/mazidai/ecommerce-support-email-agent" target="_blank" rel="noopener">View on GitHub →</a>
         </article>
         <article class="project reveal">
           <div class="tags"><span>n8n</span><span>ChatGPT</span><span>AI Agent</span></div>
           <h3>E-commerce Negotiation Chatbot Agent</h3>
-          <p>A conversational AI sales agent for an online store. It chats in the customer's language, answers product and delivery questions, collects order details and handles price bargaining — holding the price at first and offering a capped 5% discount only after repeated requests.</p>
-          <a class="link" href="https://github.com/Mazidai/ecommerce-negotiation-chatbot-agent" target="_blank" rel="noopener">View on GitHub →</a>
+          <p>A conversational AI agent that negotiates with shoppers inside price limits set by the store — helping close more sales while protecting profit margins.</p>
+          <a class="link" href="https://github.com/mazidai/ecommerce-negotiation-chatbot-agent" target="_blank" rel="noopener">View on GitHub →</a>
         </article>
       </div>
       <p class="note reveal">* More projects coming soon.</p>
@@ -227,5 +234,52 @@
   </footer>
 
   <script src="script.js"></script>
+  <script>
+    // Auto-load portfolio projects from GitHub (repos tagged with the "portfolio" topic)
+    (function () {
+      var USER = 'mazidai', TOPIC = 'portfolio';
+      var grid = document.getElementById('projectGrid');
+      if (!grid) return;
+      var NAMES = {
+        'n8n': 'n8n', 'openai': 'OpenAI', 'chatgpt': 'ChatGPT', 'gmail': 'Gmail',
+        'ai-agent': 'AI Agent', 'ai-agents': 'AI Agents', 'aiautomation': 'AI Automation',
+        'chatbot': 'Chatbot', 'email-automation': 'Email Automation',
+        'customer-support': 'Customer Support', 'workflow-automation': 'Workflow Automation'
+      };
+      function esc(t) {
+        return String(t).replace(/[&<>"']/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+      }
+      function cap(t) { return t.replace(/\b\w/g, function (c) { return c.toUpperCase(); }); }
+      function tagName(t) { return NAMES[t] || cap(t.replace(/-/g, ' ')); }
+      function title(n) { return cap(n.replace(/[-_]+/g, ' ')); }
+
+      fetch('https://api.github.com/users/' + USER + '/repos?per_page=100')
+        .then(function (r) { if (!r.ok) throw new Error('GitHub API error'); return r.json(); })
+        .then(function (list) {
+          var repos = list.filter(function (r) {
+            return !r.fork && !r.archived && (r.topics || []).indexOf(TOPIC) > -1;
+          }).sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); });
+          if (!repos.length) return; // keep fallback cards
+
+          grid.innerHTML = repos.map(function (r) {
+            var tags = (r.topics || []).filter(function (t) { return t !== TOPIC; }).slice(0, 4)
+              .map(function (t) { return '<span>' + esc(tagName(t)) + '</span>'; }).join('');
+            var desc = r.description || 'AI automation project built with n8n and OpenAI.';
+            return '<article class="project">' +
+              '<div class="tags">' + tags + '</div>' +
+              '<h3>' + esc(title(r.name)) + '</h3>' +
+              '<p>' + esc(desc) + '</p>' +
+              '<a class="link" href="' + esc(r.html_url) + '" target="_blank" rel="noopener">View on GitHub →</a>' +
+              '</article>';
+          }).join('');
+
+          var c = document.getElementById('projectCount');
+          if (c) { c.setAttribute('data-count', repos.length); c.textContent = repos.length; }
+        })
+        .catch(function () { /* keep fallback cards */ });
+    })();
+  </script>
 </body>
 </html>
