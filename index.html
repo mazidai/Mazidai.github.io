@@ -253,7 +253,15 @@
       }
       function cap(t) { return t.replace(/\b\w/g, function (c) { return c.toUpperCase(); }); }
       function tagName(t) { return NAMES[t] || cap(t.replace(/-/g, ' ')); }
-      function title(n) { return cap(n.replace(/[-_]+/g, ' ')); }
+      // Custom card titles (repo name -> title). Repos not listed here get an auto-generated title.
+      var TITLES = {
+        'skywing-travels-email-support-agent': 'SkyWing Travels Email Support Agent',
+        'ecommerce-support-email-agent': 'E-commerce Customer Support Email Agent',
+        'ecommerce-negotiation-chatbot-agent': 'E-commerce Negotiation Chatbot Agent'
+      };
+      function title(n) {
+        return TITLES[n.toLowerCase()] || cap(n.replace(/[-_]+/g, ' ')).replace(/Ecommerce/g, 'E-commerce');
+      }
 
       fetch('https://api.github.com/users/' + USER + '/repos?per_page=100')
         .then(function (r) { if (!r.ok) throw new Error('GitHub API error'); return r.json(); })
