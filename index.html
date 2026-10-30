@@ -64,7 +64,7 @@
         </div>
         <ul class="stats">
           <li><b data-count="18" data-suffix="+">0</b><span>Years of professional experience</span></li>
-          <li><b id="projectCount" data-count="3" data-suffix="">0</b><span>AI projects completed</span></li>
+          <li><b id="projectCount" data-count="3" data-suffix="">0</b><span>Demo AI projects built</span></li>
           <li><b data-count="24" data-suffix="h">0</b><span>Reply time</span></li>
         </ul>
       </div>
@@ -139,25 +139,25 @@
     <!-- PROJECTS -->
     <section id="projects" class="section container">
       <div class="section-head reveal">
-        <span class="eyebrow">Selected work</span>
-        <h2>Real problems, measurable results</h2>
+        <span class="eyebrow">Sample work</span>
+        <h2>Demo projects that show what I can build</h2>
       </div>
       <div class="grid g2" id="projectGrid">
         <!-- Fallback cards: replaced automatically by repositories tagged "portfolio" -->
         <article class="project reveal">
-          <div class="tags"><span>n8n</span><span>OpenAI</span><span>Gmail</span></div>
+          <div class="tags"><span>Demo</span><span>n8n</span><span>OpenAI</span><span>Gmail</span></div>
           <h3>Travel Agency Customer Support Email Agent</h3>
           <p>An AI agent for a travel agency that reads customer emails (visas, tour packages, refunds, bookings) and replies politely in the customer's language, handing refunds and complaints to a human team member.</p>
           <a class="link" href="https://github.com/mazidai/skywing-travels-email-support-agent" target="_blank" rel="noopener">View on GitHub →</a>
         </article>
         <article class="project reveal">
-          <div class="tags"><span>n8n</span><span>ChatGPT</span><span>Gmail</span></div>
+          <div class="tags"><span>Demo</span><span>n8n</span><span>ChatGPT</span><span>Gmail</span></div>
           <h3>E-commerce Customer Support Email Agent</h3>
           <p>An AI agent that reads incoming customer emails for an online store, understands each request (order status, returns, refunds, product questions), writes clear, polite replies and sends them automatically — so support teams answer faster with less manual work.</p>
           <a class="link" href="https://github.com/mazidai/ecommerce-support-email-agent" target="_blank" rel="noopener">View on GitHub →</a>
         </article>
         <article class="project reveal">
-          <div class="tags"><span>n8n</span><span>ChatGPT</span><span>AI Agent</span></div>
+          <div class="tags"><span>Demo</span><span>n8n</span><span>ChatGPT</span><span>AI Agent</span></div>
           <h3>E-commerce Negotiation Chatbot Agent</h3>
           <p>A conversational AI agent that negotiates with shoppers inside price limits set by the store — helping close more sales while protecting profit margins.</p>
           <a class="link" href="https://github.com/mazidai/ecommerce-negotiation-chatbot-agent" target="_blank" rel="noopener">View on GitHub →</a>
@@ -266,6 +266,12 @@
         'ecommerce-support-email-agent': 'E-commerce Customer Support Email Agent',
         'ecommerce-negotiation-chatbot-agent': 'E-commerce Negotiation Chatbot Agent'
       };
+      // Repos that are demo / sample projects (shown with a "Demo" tag)
+      var DEMOS = {
+        'skywing-travels-email-support-agent': true,
+        'ecommerce-support-email-agent': true,
+        'ecommerce-negotiation-chatbot-agent': true
+      };
       function title(n) {
         return TITLES[n.toLowerCase()] || cap(n.replace(/[-_]+/g, ' ')).replace(/Ecommerce/g, 'E-commerce');
       }
@@ -281,6 +287,7 @@
           grid.innerHTML = repos.map(function (r) {
             var tags = (r.topics || []).filter(function (t) { return t !== TOPIC; }).slice(0, 4)
               .map(function (t) { return '<span>' + esc(tagName(t)) + '</span>'; }).join('');
+            if (DEMOS[r.name.toLowerCase()]) { tags = '<span>Demo</span>' + tags; }
             var desc = r.description || 'AI automation project built with n8n and OpenAI.';
             return '<article class="project">' +
               '<div class="tags">' + tags + '</div>' +
